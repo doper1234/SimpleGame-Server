@@ -18,12 +18,14 @@ import java.net.*;
 
 public class GameClient {
 
-    Color p1Color = Color.red;
-    Color p2Color = Color.blue;
+    String iP = "192.168.1.104";
     Player p1;
     Player p2;
+    Player p3;
+    Player p4;
     int frameWidth = 300, frameHeight = 300;
     int keyPressed;
+    int playerNumber;
     Socket socket;
     OutputStream outStream;
     ObjectOutputStream objOutStream;
@@ -66,13 +68,17 @@ public class GameClient {
         @Override
         public void paintComponent(Graphics g) {
 
-            g.setColor(Color.white);
+//            g.setColor(Color.white);
             g.fillRect(0, 0, this.getWidth(), this.getHeight());
-            g.setColor(Color.green);
-            
+//            g.setColor(Color.green);
+//            
             if(p1 != null){
             
                 p1.drawPlayer(g);
+            }
+            if(p2 != null){
+                
+                p2.drawPlayer(g);
             }
             
             //p2.drawPlayer(g);
@@ -83,7 +89,7 @@ public class GameClient {
 
     public void setUpNetworking() {
         try {
-            socket = new Socket("localhost", 3074);
+            socket = new Socket(iP, 3074);
             outStream = socket.getOutputStream();
 
             objOutStream = new ObjectOutputStream(outStream);
@@ -114,7 +120,7 @@ public class GameClient {
             try {
 
                 int keyPressed = ke.getKeyCode();
-                writer.println(keyPressed);
+                writer.println(keyPressed + "," + playerNumber);
                 writer.flush();
 
             } catch (Exception e) {
@@ -139,18 +145,32 @@ public class GameClient {
 
                 while ((message = reader.readLine()) != null) {
                 
+                    String[] result = reader.readLine().split(",");
+                    int player = Integer.parseInt(result[0]);
+                    int x = Integer.parseInt(result[1]);
+                    int y = Integer.parseInt(result[2]);
+                    
                     System.out.println(message);
-                    if(p1 != null){
-                    
-                        String[] result = reader.readLine().split(",");
-                        p1.setX(Integer.parseInt(result[0]));
-                        p1.setY(Integer.parseInt(result[1]));
-                        System.out.println("the player should move");
+                    if(p1 != null && player == 1){
+                        
+                        p1.setX(x);
+                        p1.setY(y);
                     }
-                    else if(message.equalsIgnoreCase("you are player 1")){
-                        p1 = new Player(100,100, p1Color);
+                    else if(message.equalsIgnoreCase("I am player 1")){
+                        playerNumber = 1;
+                        p1 = new Player(100,100, playerNumber);
                     }
+                    if(p2 != null && player == 2){
                     
+                        p2.setX(x);
+                        p2.setY(y);
+                        
+                    }
+                    else if(message.equalsIgnoreCase("I am player 2")){
+                        playerNumber = 2;
+                        p2 = new Player(100,100, playerNumber);
+                        
+                    }
                     
                 }
             } catch (Exception ex) {
