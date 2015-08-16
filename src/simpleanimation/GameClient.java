@@ -122,6 +122,11 @@ public class GameClient {
                 int keyPressed = ke.getKeyCode();
                 writer.println(keyPressed + "," + playerNumber);
                 writer.flush();
+                
+                if (keyPressed == KeyEvent.VK_ESCAPE){
+                    System.exit(0);
+                    
+                }
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -140,33 +145,54 @@ public class GameClient {
         @Override
         public void run() {
             String message;
+            int player1;
+            int x1;
+            int y1;
+            int player2 = 0;
+            int x2 = -100;
+            int y2 = -100;
             try {
                 
 
                 while ((message = reader.readLine()) != null) {
                 
                     String[] result = reader.readLine().split(",");
-                    int player = Integer.parseInt(result[0]);
-                    int x = Integer.parseInt(result[1]);
-                    int y = Integer.parseInt(result[2]);
+                    player1 = Integer.parseInt(result[0]);
+                    x1 = Integer.parseInt(result[1]);
+                    y1 = Integer.parseInt(result[2]);
+                    if(result.length > 3){
+                    
+                        player2 = Integer.parseInt(result[3]);
+                        x2 = Integer.parseInt(result[4]);
+                        y2 = Integer.parseInt(result[5]);
+                    
+                    }
+                    
+                    
                     
                     System.out.println(message);
-                    if(p1 != null && player == 1){
+                    if(player1 == 1){
                         
-                        p1.setX(x);
-                        p1.setY(y);
+                        if(p1 == null){
+                            p1 = new Player(100,100,1);
+                        }
+                        p1.setX(x1);
+                        p1.setY(y1);
                     }
-                    else if(message.equalsIgnoreCase("I am player 1")){
+                    if(message.equalsIgnoreCase("I am player 1")){
                         playerNumber = 1;
                         p1 = new Player(100,100, playerNumber);
                     }
-                    if(p2 != null && player == 2){
                     
-                        p2.setX(x);
-                        p2.setY(y);
+                    if(player2 == 2){
+                        if(p2 == null){
+                          p2 = new Player(100,100, 2);  
+                        }
+                        p2.setX(x2);
+                        p2.setY(y2);
                         
                     }
-                    else if(message.equalsIgnoreCase("I am player 2")){
+                    if(message.equalsIgnoreCase("I am player 2")){
                         playerNumber = 2;
                         p2 = new Player(100,100, playerNumber);
                         
